@@ -1,0 +1,890 @@
+KMD
+00000000: EA000033    ;                 B       main
+00000004:             ; 
+00000004: 41 20 72 6F ; test    DEFB    "A room without books is like a body without a soul",0
+00000008: 6F 6D 20 77 ; 
+0000000C: 69 74 68 6F ; 
+00000010: 75 74 20 62 ; 
+00000014: 6F 6F 6B 73 ; 
+00000018: 20 69 73 20 ; 
+0000001C: 6C 69 6B 65 ; 
+00000020: 20 61 20 62 ; 
+00000024: 6F 64 79 20 ; 
+00000028: 77 69 74 68 ; 
+0000002C: 6F 75 74 20 ; 
+00000030: 61 20 73 6F ; 
+00000034: 75 6C 00    ; 
+00000037: 47 75 65 73 ; title   DEFB    "Guess the phrase from the clue below...\n"
+0000003B: 73 20 74 68 ; 
+0000003F: 65 20 70 68 ; 
+00000043: 72 61 73 65 ; 
+00000047: 20 66 72 6F ; 
+0000004B: 6D 20 74 68 ; 
+0000004F: 65 20 63 6C ; 
+00000053: 75 65 20 62 ; 
+00000057: 65 6C 6F 77 ; 
+0000005B: 2E 2E 2E 0A ; 
+0000005F: 41 6C 6C 20 ;                 DEFB    "All vowels have been removed, and the spaces redistributed\n\n",0
+00000063: 76 6F 77 65 ; 
+00000067: 6C 73 20 68 ; 
+0000006B: 61 76 65 20 ; 
+0000006F: 62 65 65 6E ; 
+00000073: 20 72 65 6D ; 
+00000077: 6F 76 65 64 ; 
+0000007B: 2C 20 61 6E ; 
+0000007F: 64 20 74 68 ; 
+00000083: 65 20 73 70 ; 
+00000087: 61 63 65 73 ; 
+0000008B: 20 72 65 64 ; 
+0000008F: 69 73 74 72 ; 
+00000093: 69 62 75 74 ; 
+00000097: 65 64 0A 0A ; 
+0000009B: 00          ; 
+0000009C:             ; 
+0000009C: 45 6E 74 65 ; prompt  DEFB    "Enter your guess:\n",0
+000000A0: 72 20 79 6F ; 
+000000A4: 75 72 20 67 ; 
+000000A8: 75 65 73 73 ; 
+000000AC: 3A 0A 00    ; 
+000000AF: 0A 43 6F 72 ; correct DEFB    "\nCorrect.\n",0
+000000B3: 72 65 63 74 ; 
+000000B7: 2E 0A 00    ; 
+000000BA: 0A 49 6E 63 ; wrong   DEFB    "\nIncorrect! Try again:\n",0
+000000BE: 6F 72 72 65 ; 
+000000C2: 63 74 21 20 ; 
+000000C6: 54 72 79 20 ; 
+000000CA: 61 67 61 69 ; 
+000000CE: 6E 3A 0A 00 ; 
+000000D2:             ; 
+000000D2:             ; ;; do NOT change the below, it works
+000000D2:             ; 
+000000D4:             ;                 ALIGN
+000000D4:             ; 
+000000D4: E3A0D601    ; main    MOV             R13,#0x100000           ; setup stack
+000000D8:             ; 
+000000D8: E28F0FFD    ;                 ADRL    R0,ansString
+000000DC: E2800B01    ; 
+000000E0: E24F10E4    ;                 ADRL    R1,test
+000000E4: EB00007B    ;                 BL              strcpy
+000000E8:             ; 
+000000E8: E28F0FF9    ;                 ADRL    R0,ansString
+000000EC: E2800B01    ; 
+000000F0: EB0000B4    ;                 BL              MakeUpper
+000000F4:             ; 
+000000F4: E28F1FF6    ;                 ADRL    R1,ansString
+000000F8: E2811B01    ; 
+000000FC: E28F0E5D    ;                 ADRL    R0,spareString
+00000100: E2800000    ; 
+00000104: EB000073    ;                 BL              strcpy
+00000108:             ; 
+00000108: E28F0F71    ;                 ADRL    R0,spareString
+0000010C: E2800B01    ; 
+00000110: EB000127    ;                 BL              RemoveVowels
+00000114:             ; 
+00000114:             ;                 ; Count word lengths
+00000114: E28F0F6E    ;                 ADRL    R0,spareString
+00000118: E2800B01    ; 
+0000011C: E28F1EBB    ;                 ADRL    R1,wordLengths
+00000120: E2811000    ; 
+00000124: EB0000CD    ;                 BL              CountWordLengths
+00000128: E1A04000    ;                 MOV             R4,R0
+0000012C:             ; 
+0000012C:             ;                 ;; insertion sort them
+0000012C: E28F0EBA    ;                 ADRL    R0,wordLengths
+00000130: E2800000    ; 
+00000134: E1A01004    ;                 MOV             R1,R4
+00000138: EB00014B    ;                 BL              BubbleSort
+0000013C:             ; 
+0000013C: E28F0E99    ;                 ADRL    R0,clueString
+00000140: E2800000    ; 
+00000144: E28F1F62    ;                 ADRL    R1,spareString
+00000148: E2811B01    ; 
+0000014C: E28F2D2E    ;                 ADRL    R2,wordLengths
+00000150: E2822000    ; 
+00000154: E1A03004    ;                 MOV             R3,R4
+00000158: EB00001F    ;                 BL              RedistributeSpaces
+0000015C:             ; 
+0000015C:             ; 
+0000015C: E24F002D    ;                 ADRL    R0,title
+00000160: E2400C01    ; 
+00000164: EF000003    ;                 SWI             3
+00000168:             ; 
+00000168: E28F0F59    ;                 ADRL    R0,clueString
+0000016C: E2800B02    ; 
+00000170: EF000003    ;                 SWI             3
+00000174:             ; 
+00000174: E3A0000A    ;                 MOV             R0,#10
+00000178: EF000000    ;                 SWI             0
+0000017C: EF000000    ;                 SWI             0
+00000180:             ; 
+00000180: E24F00EC    ; gloop   ADRL    R0,prompt
+00000184: EF000003    ;                 SWI             3
+00000188:             ; 
+00000188: E28F0F51    ;                 ADRL    R0,spareString
+0000018C: E2800B01    ; 
+00000190: EB00006B    ;                 BL              ReadString
+00000194:             ; 
+00000194: E28F0F4E    ;                 ADRL    R0,spareString
+00000198: E2800B01    ; 
+0000019C: EB000089    ;                 BL              MakeUpper
+000001A0:             ; 
+000001A0: E28F0FCB    ;                 ADRL    R0,ansString
+000001A4: E2800B01    ; 
+000001A8: E28F1F49    ;                 ADRL    R1,spareString
+000001AC: E2811B01    ; 
+000001B0: EB000021    ;                 BL              strcmp
+000001B4: E3500000    ;                 CMP             R0,#0
+000001B8: 0A000003    ;                 BEQ             crrct
+000001BC:             ; 
+000001BC:             ; incorrect
+000001BC: E24F000A    ;                 ADRL    R0,wrong
+000001C0: E2400C01    ; 
+000001C4: EF000003    ;                 SWI             3
+000001C8: EAFFFFEC    ;                 B gloop
+000001CC:             ; 
+000001CC:             ; 
+000001CC: E24F0025    ; crrct   ADRL    R0,correct
+000001D0: E2400C01    ; 
+000001D4: EF000003    ;                 SWI             3
+000001D8:             ; 
+000001D8: EF000002    ;                 SWI             2
+000001DC:             ; 
+000001DC:             ; ;; RedistributeSpaces -- redistribute the spaces in the string at R0
+000001DC:             ; ;;                       based on the lengths in the wordLengths array
+000001DC:             ; ;; R0 -> Dest, R1 -> source
+000001DC:             ; ;; R2 -> wordLengths, R3 -> number of words
+000001DC:             ; 
+000001DC:             ; RedistributeSpaces
+000001DC: E92D43F0    ;                 STMFD   R13!, {R4-R9,R14}
+000001E0: E3A05000    ;                 MOV             R5,#0
+000001E4: E7926105    ;                 LDR             R6,[R2,R5 LSL #2]
+000001E8:             ; 
+000001E8: E4D14001    ; rsLoop  LDRB    R4,[R1],#1
+000001EC: E3540020    ;                 CMP             R4,#' '
+000001F0: 0A00000D    ;                 BEQ             rsSkip
+000001F4: E4C04001    ;                 STRB    R4,[R0],#1
+000001F8: E2466001    ;                 SUB             R6,R6,#1
+000001FC: E3560000    ;                 CMP             R6,#0
+00000200: 1A000009    ;                 BNE             rsSkip
+00000204:             ; 
+00000204: E3A08020    ;                 MOV             R8,#' '
+00000208: E4C08001    ;                 STRB    R8,[R0],#1
+0000020C: E2855001    ;                 ADD             R5,R5,#1
+00000210: E1550003    ;                 CMP             R5,R3
+00000214: BA000003    ;                 BLT             rsadvance
+00000218: E5514000    ;                 LDRB            R4,[R1]
+0000021C: E3540000    ;                 CMP             R4,#0
+00000220: 1A000004    ;                 BNE             rsErr
+00000224: E4C04001    ;                 STRB    R4,[r0],#1
+00000228:             ; rsadvance
+00000228: E7926105    ;                 LDR             R6,[R2,R5 LSL #2]
+0000022C:             ; 
+0000022C: E3540000    ; rsSkip  CMP             R4,#0
+00000230: 1AFFFFEC    ;                 BNE             rsLoop
+00000234:             ; 
+00000234: E8BD83F0    ;                 LDMFD   R13!, {R4-R9,PC}
+00000238:             ; 
+00000238: EF000002    ; rsErr   SWI             2
+0000023C:             ; 
+0000023C:             ; 
+0000023C:             ; ;; strcmp -- compare two strings 
+0000023C:             ; ;; 
+0000023C:             ; ;; R0 address of first string
+0000023C:             ; ;; R1 address of second string
+0000023C:             ; 
+0000023C:             ; strcmp
+0000023C:             ; 
+0000023C: E4D02001    ;                 LDRB    R2,[R0],#1
+00000240: E4D13001    ;                 LDRB    R3,[R1],#1
+00000244: E1520003    ;                 CMP             R2,R3
+00000248: 1A000001    ;                 BNE             csend
+0000024C: E3520000    ;                 CMP             R2,#0
+00000250: 1AFFFFF9    ;                 BNE             strcmp
+00000254:             ; 
+00000254: E0420003    ; csend   SUB             R0,R2,R3
+00000258: E1A0F00E    ;                 MOV             PC,R14  
+0000025C:             ; 
+0000025C:             ;                 include strcpy.s
+0000025C: EA00000E    ;                 B       test_strcpy
+00000260:             ; 
+00000260: 48 65 6C 6C ; tsc_string      DEFB    "Hello World",0
+00000264: 6F 20 57 6F ; 
+00000268: 72 6C 64 00 ; 
+0000026C: 23 23 23 23 ; tsc_dest        DEFB    "###########################",0
+00000270: 23 23 23 23 ; 
+00000274: 23 23 23 23 ; 
+00000278: 23 23 23 23 ; 
+0000027C: 23 23 23 23 ; 
+00000280: 23 23 23 23 ; 
+00000284: 23 23 23 00 ; 
+00000288: 43 6F 70 69 ; tsc_copied      DEFB    "Copied '",0
+0000028C: 65 64 20 27 ; 
+00000290: 00          ; 
+00000291: 27 20 74 6F ; tsc_to          DEFB    "' to '",0
+00000295: 20 27 00    ; 
+00000298: 27 0A 00    ; tsc_eol         DEFB    "'\n",0
+0000029C:             ;                 ALIGN
+0000029C:             ; 
+0000029C:             ; ;; Test initial implementation
+0000029C:             ; test_strcpy
+0000029C: E3A0D801    ;                 MOV             R13,#0x10000
+000002A0:             ; 
+000002A0: E24F003C    ;                 ADRL    R0,tsc_dest
+000002A4: E24F104C    ;                 ADRL    R1,tsc_string
+000002A8: EB00000A    ;                 BL              strcpy
+000002AC:             ; 
+000002AC: E24F002C    ;                 ADRL    R0,tsc_copied
+000002B0: EF000003    ;                 SWI             3
+000002B4:             ; 
+000002B4: E24F005C    ;                 ADRL    R0,tsc_string
+000002B8: EF000003    ;                 SWI             3
+000002BC:             ; 
+000002BC: E24F0033    ;                 ADRL    R0,tsc_to
+000002C0: EF000003    ;                 SWI             3
+000002C4:             ; 
+000002C4: E24F0060    ;                 ADRL    R0,tsc_dest
+000002C8: EF000003    ;                 SWI             3
+000002CC:             ; 
+000002CC: E24F003C    ;                 ADRL    R0,tsc_eol
+000002D0: EF000003    ;                 SWI             3
+000002D4:             ; 
+000002D4: EF000002    ;                 SWI             2
+000002D8:             ; 
+000002D8:             ; 
+000002D8:             ; ;; strcpy -- copy the string at R1 to the address at R0
+000002D8:             ; ;; R0 <--- destination
+000002D8:             ; ;; R1 <--- source
+000002D8:             ; 
+000002D8:             ; strcpy
+000002D8:             ;         ; load each byte sequentially then store at new address, incrementing
+000002D8:             ;         ; the address for each character, until zero byte at the end is 
+000002D8:             ;         ; reached (but still copied)
+000002D8:             ; 
+000002D8:             ; mainStrLoop
+000002D8: E4D12001    ;         LDRB R2, [R1], #1 ; post increment the value in R1 by 1
+000002DC: E4C02001    ;         STRB R2, [R0], #1
+000002E0:             ; 
+000002E0:             ;         ; and if it's zero, quit        
+000002E0: E3520000    ;         CMP R2, #0
+000002E4: 0A000000    ;         BEQ stopCopying 
+000002E8:             ; 
+000002E8:             ;         ; else, continue
+000002E8: EAFFFFFA    ;         B mainStrLoop
+000002EC:             ; 
+000002EC:             ; 
+000002EC:             ; 
+000002EC:             ; stopCopying
+000002EC:             ;         ; if the zero is hit, we BL back
+000002EC: E1A0F00E    ;         MOV PC, R14
+000002F0:             ;                 include ReadString.s
+000002F0: EA000007    ;                 B       test_readstring
+000002F4:             ; 
+000002F4: 45 6E 74 65 ; trs_prompt      DEFB    "Enter a string:",0
+000002F8: 72 20 61 20 ; 
+000002FC: 73 74 72 69 ; 
+00000300: 6E 67 3A 00 ; 
+00000304: 59 6F 75 20 ; trs_report      DEFB    "You entered:",0
+00000308: 65 6E 74 65 ; 
+0000030C: 72 65 64 3A ; 
+00000310: 00          ; 
+00000311:             ; 
+00000314:             ;                 ALIGN
+00000314:             ; 
+00000314:             ; ;; Test for initial implementation
+00000314:             ; test_readstring
+00000314: E3A0D801    ;                 MOV             R13,#0x10000
+00000318:             ; 
+00000318: E24F002C    ;                 ADRL    R0, trs_prompt
+0000031C: EF000003    ;                 SWI             3
+00000320:             ; 
+00000320: E28F0044    ;                 ADRL    R0,trs_str
+00000324: EB000006    ;                 BL              ReadString
+00000328:             ; 
+00000328: E24F002C    ;                 ADRL    R0,trs_report
+0000032C: EF000003    ;                 SWI             3
+00000330:             ; 
+00000330: E28F0034    ;                 ADRL    R0,trs_str
+00000334: EF000003    ;                 SWI             3
+00000338:             ; 
+00000338: E3A0000A    ;                 MOV             R0,#10
+0000033C: EF000000    ;                 SWI             0
+00000340: EF000002    ;                 SWI             2
+00000344:             ; 
+00000344:             ; 
+00000344:             ; 
+00000344:             ; ;; ReadString -- read a string from the keyboard until ENTER/RETURN is pressed
+00000344:             ; ;; 
+00000344:             ; ;; R0 address to place string
+00000344:             ; 
+00000344:             ; ReadString
+00000344:             ; 
+00000344:             ;         ; read in with SWI 1 until RETURN (10) is pressed
+00000344:             ;         ; as SWI 1 moves into R0, move the address into R1
+00000344:             ; 
+00000344: E1A01000    ;         MOV R1,R0
+00000348:             ; 
+00000348:             ; mainReadLoop
+00000348: EF000001    ;         SWI 1
+0000034C:             ; 
+0000034C:             ;         ; check return
+0000034C: E350000A    ;         CMP R0, #10
+00000350: 0A000002    ;         BEQ end
+00000354:             ; 
+00000354:             ;         ; else print it out and add to string
+00000354: EF000000    ;         SWI 0 ; print
+00000358:             ; 
+00000358:             ;         ; add to string
+00000358: E4C10001    ;         STRB R0, [R1], #1
+0000035C:             ; 
+0000035C: EAFFFFF9    ;         B mainReadLoop
+00000360:             ; 
+00000360:             ; end 
+00000360:             ;         ; store null byte
+00000360: E3A00000    ;         MOV R0,#0
+00000364: E4C10001    ;         STRB R0, [R1], #1
+00000368: E1A0F00E    ;         MOV PC,R14
+0000036C:             ; 
+0000036C:             ; 
+0000036C:             ; ;; DO NOT REMOVE THIS LABEL AFTER YOUR CODE
+0000036C: 00000000    ; trs_str DEFW    0
+00000370:             ; 
+00000370:             ; 
+00000370:             ;                 include MakeUpper.s
+00000370: EA000006    ;                 B       test_makeupper
+00000374:             ; 
+00000374: 48 65 6C 6C ; tmu_string      DEFB    "Hello World",0
+00000378: 6F 20 57 6F ; 
+0000037C: 72 6C 64 00 ; 
+00000380: 27 20 62 65 ; tmu_becomes     DEFB    "' becomes '",0
+00000384: 63 6F 6D 65 ; 
+00000388: 73 20 27 00 ; 
+0000038C: 27 0A 00    ; tmu_eol         DEFB    "'\n",0
+00000390:             ;                 ALIGN
+00000390:             ; 
+00000390:             ; ;; Test for initial implementation
+00000390:             ; test_makeupper
+00000390: E3A0D801    ;                 MOV             R13,#0x10000
+00000394:             ; 
+00000394: E3A00027    ;                 MOV             R0,#39
+00000398: EF000000    ;                 SWI             0
+0000039C: E24F0030    ;                 ADRL    R0,tmu_string
+000003A0: EF000003    ;                 SWI             3
+000003A4:             ; 
+000003A4: E24F002C    ;                 ADRL    R0,tmu_becomes
+000003A8: EF000003    ;                 SWI             3
+000003AC:             ; 
+000003AC: E24F0040    ;                 ADRL    R0,tmu_string
+000003B0: EB000004    ;                 BL              MakeUpper
+000003B4:             ; 
+000003B4: E24F0048    ;                 ADRL    R0,tmu_string
+000003B8: EF000003    ;                 SWI             3
+000003BC:             ; 
+000003BC: E24F0038    ;                 ADRL    R0,tmu_eol
+000003C0: EF000003    ;                 SWI             3
+000003C4:             ; 
+000003C4: EF000002    ;                 SWI             2
+000003C8:             ; 
+000003C8:             ; 
+000003C8:             ; ;; MakeUpper -- convert the string at R0 to upper case (capital letters) in place
+000003C8:             ; ;; MakeUpper
+000003C8:             ; ;; R0 string
+000003C8:             ; 
+000003C8:             ; 
+000003C8:             ; MakeUpper
+000003C8:             ;         ; iterate over every character in the string in R0 until null.
+000003C8:             ; 
+000003C8:             ; 
+000003C8:             ; mainLoop
+000003C8: E4D01001    ;         LDRB R1, [R0], #1       ; load content of R0 into R1
+000003CC:             ; 
+000003CC:             ;         ; check for null terminator.
+000003CC: E3510000    ;         CMP R1,#0
+000003D0: 0A000006    ;         BEQ exit
+000003D4:             ; 
+000003D4:             ;         ; compare if it is a lower case - if not below z or above z
+000003D4: E3510061    ;         CMP R1,#'a'
+000003D8: BAFFFFFA    ;         BLT     mainLoop
+000003DC:             ; 
+000003DC: E351007A    ;         CMP R1,#'z'
+000003E0: CAFFFFF8    ;         BGT mainLoop
+000003E4:             ; 
+000003E4:             ;         ; now confirmed lowercase, add 32
+000003E4:             ;         ; update: stupid me it's SUB!
+000003E4: E2411020    ;         SUB R1,R1,#32
+000003E8:             ; 
+000003E8:             ;         ; ... and store back into the strin at the original address (curr -1)
+000003E8: E5401001    ;         STRB R1, [R0, #-1]
+000003EC:             ; 
+000003EC: EAFFFFF5    ;         B mainLoop
+000003F0:             ; 
+000003F0:             ; exit
+000003F0: E1A0F00E    ;         MOV PC, R14
+000003F4:             ; 
+000003F4:             ; 
+000003F4:             ;                 include CountWordLengths.s
+000003F4: EA000005    ;                 B       test_cwrdl
+000003F8:             ; 
+000003F8: 54 48 45 20 ; tcwrdl_string   DEFB    "THE CAT SAT ON THE MAT",0
+000003FC: 43 41 54 20 ; 
+00000400: 53 41 54 20 ; 
+00000404: 4F 4E 20 54 ; 
+00000408: 48 45 20 4D ; 
+0000040C: 41 54 00    ; 
+0000040F:             ; 
+00000410:             ;                 ALIGN
+00000410:             ; 
+00000410:             ; ;; Test routine before integrating in main function
+00000410:             ; test_cwrdl
+00000410: E3A0D801    ;                 MOV             R13,#0x10000
+00000414:             ; 
+00000414: E24F0024    ;                 ADRL    R0,tcwrdl_string
+00000418: EF000003    ;                 SWI             3
+0000041C:             ; 
+0000041C: E24F002C    ;                 ADRL    R0,tcwrdl_string
+00000420: E28F1094    ;                 ADRL    R1,tcwrdl_array
+00000424: EB00000D    ;                 BL              CountWordLengths
+00000428: E1A03000    ;                 MOV             R3,R0
+0000042C: E3A0000A    ;                 MOV             R0,#10
+00000430: EF000000    ;                 SWI             0
+00000434:             ; 
+00000434: E3A02000    ;                 MOV             R2,#0
+00000438: E28F107C    ;                 ADRL    R1,tcwrdl_array
+0000043C: EA000004    ;                 B               tcwrdl_cond
+00000440:             ; tcwrdl_loop
+00000440: E7910102    ;                 LDR             R0, [R1, R2 LSL #2]
+00000444: EF000004    ;                 SWI             4
+00000448: E3A0000A    ;                 MOV             R0,#10
+0000044C: EF000000    ;                 SWI             0
+00000450: E2822001    ;                 ADD             R2,R2,#1
+00000454:             ; tcwrdl_cond
+00000454: E1520003    ;                 CMP             R2,R3
+00000458: BAFFFFF8    ;                 BLT             tcwrdl_loop
+0000045C:             ; 
+0000045C: EF000002    ;                 SWI             2
+00000460:             ; 
+00000460:             ; 
+00000460:             ; ;; CountWordLengths -- fill in an array with the length of each word in the string
+00000460:             ; ;; R0 <-- string
+00000460:             ; ;; R1 <-- array to file
+00000460:             ; ;; Returns: The number of words found in R0.
+00000460:             ; 
+00000460:             ; CountWordLengths
+00000460: E92D07F0    ;         STMFD R13!, {R4-R10}
+00000464:             ; 
+00000464:             ;         ; Initialise word length temp in R3
+00000464: E3A03000    ;         MOV R3, #0
+00000468:             ; 
+00000468:             ;         ; Initialise number of words found
+00000468: E3A04000    ;         MOV R4, #0
+0000046C:             ; 
+0000046C:             ; characterLoop
+0000046C:             ;         ; Move the character into R2
+0000046C: E4D02001    ;         LDRB R2, [R0], #1 ; Post-incrementing
+00000470:             ; 
+00000470:             ;         ; Check for null-terminator first.
+00000470: E3520000    ;         CMP R2, #0 
+00000474: 0A000009    ;         BEQ endCount
+00000478:             ; 
+00000478:             ;         ; COMPARE to space
+00000478: E3520020    ;         CMP R2,#32
+0000047C: 0A000001    ;         BEQ foundSpace
+00000480:             ; 
+00000480:             ;         ; Incremenet word length
+00000480: E2833001    ;         ADD R3,R3,#1
+00000484:             ; 
+00000484:             ;         ; Restart looping
+00000484: EAFFFFF8    ;         B characterLoop
+00000488:             ; 
+00000488:             ; foundSpace
+00000488:             ;         ; Check if the word length is zero.
+00000488:             ;         ; If so, do not store and carry on with the next char
+00000488: E3530000    ;         CMP R3, #0
+0000048C: 0AFFFFF6    ;         BEQ characterLoop
+00000490:             ; 
+00000490:             ;         ; Store the length of the word AS INTEGER into the array (and post increment)
+00000490: E4813004    ;         STR R3, [R1], #4
+00000494:             ; 
+00000494:             ;         ; Increment number of words found
+00000494: E2844001    ;         ADD R4, R4, #1
+00000498:             ; 
+00000498:             ;         ; and reset the counter to zero
+00000498: E3A03000    ;         MOV R3, #0
+0000049C:             ; 
+0000049C: EAFFFFF2    ;         B characterLoop
+000004A0:             ; 
+000004A0:             ; endCount
+000004A0:             ;     ; Check if remaining word to store to solve ooff-by-one err
+000004A0: E3530000    ;     CMP R3, #0
+000004A4: 0A000001    ;     BEQ skipLast
+000004A8:             ; 
+000004A8:             ;     ; Store the last word length AS INTEGER
+000004A8: E4813004    ;     STR R3, [R1], #4
+000004AC: E2844001    ;     ADD R4, R4, #1
+000004B0:             ; 
+000004B0:             ; skipLast
+000004B0:             ;         ; MOve into R0 the number of words found
+000004B0: E1A00004    ;         MOV R0, R4
+000004B4:             ; 
+000004B4:             ;         ; Move into R1 the array
+000004B4:             ;         ; ^^ this is not needed ^^
+000004B4:             ; 
+000004B4:             ;         ; Reset branch with link
+000004B4: E8BD07F0    ;         LDMFD R13!, {R4-R10}
+000004B8: E1A0F00E    ;         MOV PC, R14
+000004BC:             ; 
+000004BC:             ; 
+000004BC:             ; ;; DO NOT REMOVE THIS LABEL
+000004BC: 00000000    ; tcwrdl_array    DEFW    0       
+000004C0:             ; 
+000004C0:             ; 
+000004C0:             ;                 include RemoveVowels.s
+000004C0: EA000006    ;                 B       test_rmvwls
+000004C4:             ; 
+000004C4: 48 45 4C 4C ; trv_string      DEFB    "HELLO WORLD",0
+000004C8: 4F 20 57 4F ; 
+000004CC: 52 4C 44 00 ; 
+000004D0: 27 20 62 65 ; trv_becomes     DEFB    "' becomes '",0
+000004D4: 63 6F 6D 65 ; 
+000004D8: 73 20 27 00 ; 
+000004DC: 27 0A 00    ; trv_eol         DEFB    "'\n",0
+000004E0:             ;                 ALIGN
+000004E0:             ; 
+000004E0:             ; ;; Test individual implementation
+000004E0:             ; test_rmvwls
+000004E0: E3A0D801    ;                 MOV             R13,#0x10000
+000004E4:             ; 
+000004E4: E3A00027    ;                 MOV             R0,#39
+000004E8: EF000000    ;                 SWI             0
+000004EC: E24F0030    ;                 ADRL    R0,trv_string
+000004F0: EF000003    ;                 SWI             3
+000004F4:             ; 
+000004F4: E24F002C    ;                 ADRL    R0,trv_becomes
+000004F8: EF000003    ;                 SWI             3
+000004FC:             ; 
+000004FC: E24F0040    ;                 ADRL    R0,trv_string
+00000500: EB00002B    ;                 BL              RemoveVowels
+00000504:             ; 
+00000504: E24F0048    ;                 ADRL    R0,trv_string
+00000508: EF000003    ;                 SWI             3
+0000050C:             ; 
+0000050C: E24F0038    ;                 ADRL    R0,trv_eol
+00000510: EF000003    ;                 SWI             3
+00000514:             ; 
+00000514: EF000002    ;                 SWI             2
+00000518:             ; 
+00000518:             ; 
+00000518:             ; ;; copies isVowel subroutine into this file automatically
+00000518:             ;                 include isVowel.s
+00000518: EA000006    ;                 B       test_isvowel
+0000051C:             ; 
+0000051C: 41 42 43 44 ; tsv_vowel       DEFB    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+00000520: 45 46 47 48 ; 
+00000524: 49 4A 4B 4C ; 
+00000528: 4D 4E 4F 50 ; 
+0000052C: 51 52 53 54 ; 
+00000530: 55 56 57 58 ; 
+00000534: 59 5A       ; 
+00000536:             ; 
+00000538:             ;                 ALIGN
+00000538:             ; 
+00000538:             ; ;; Test for initial implementation
+00000538:             ; test_isvowel
+00000538: E3A0D801    ;                 MOV             R13,#0x10000
+0000053C:             ; 
+0000053C: E24F4028    ;                 ADRL    R4,tsv_vowel
+00000540: E3A0501A    ;                 MOV             R5,#26
+00000544:             ; tsv_loop
+00000544: E4D46001    ;                 LDRB    R6, [R4],#1
+00000548: E1A00006    ;                 MOV             R0, R6
+0000054C: EF000000    ;                 SWI             0
+00000550:             ; 
+00000550: E3A00020    ;                 MOV             R0,#32
+00000554: EF000000    ;                 SWI             0
+00000558:             ;                 
+00000558: E1A00006    ;                 MOV             R0,R6
+0000055C: EB000006    ;                 BL              isVowel
+00000560: EF000004    ;                 SWI             4
+00000564:             ; 
+00000564: E3A0000A    ;                 MOV             R0,#10
+00000568: EF000000    ;                 SWI             0
+0000056C: E2455001    ;                 SUB             R5,R5,#1
+00000570: E3550000    ;                 CMP             R5,#0
+00000574: CAFFFFF2    ;                 BGT             tsv_loop
+00000578:             ; 
+00000578: EF000002    ;                 SWI             2
+0000057C:             ; 
+0000057C:             ; 
+0000057C:             ; ;; isVowel -- test whether character in R0 is a vowel or not
+0000057C:             ; ;; R0 <--- character
+0000057C:             ; ;; Returns in  R0: 1 if R0 contained a vowel, 0 otherwise
+0000057C:             ; 
+0000057C:             ; isVowel
+0000057C:             ; ;; Insert your code here
+0000057C:             ; 
+0000057C:             ;         ; Compare all AEIOU if is in R0
+0000057C: E3500041    ;         CMP R0,#'A'
+00000580: 0A000009    ;         BEQ isActuallyVowel
+00000584:             ; 
+00000584: E3500045    ;         CMP R0,#'E'
+00000588: 0A000007    ;         BEQ isActuallyVowel
+0000058C:             ; 
+0000058C: E3500049    ;         CMP R0,#'I'
+00000590: 0A000005    ;         BEQ isActuallyVowel
+00000594:             ; 
+00000594: E350004F    ;         CMP R0,#'O'
+00000598: 0A000003    ;         BEQ isActuallyVowel
+0000059C:             ; 
+0000059C: E3500055    ;         CMP R0,#'U'
+000005A0: 0A000001    ;         BEQ isActuallyVowel
+000005A4:             ; 
+000005A4:             ;         ; Is not a vowel, so set to 0
+000005A4: E3A00000    ;         MOV R0,#0
+000005A8:             ; 
+000005A8:             ;         ; Optimise instruction amounts by having end immediately here, and as
+000005A8:             ;         ; most letters are not vowels
+000005A8: E1A0F00E    ;         MOV PC,R14      ; Move the branch with link instruction return address to the program c
+                      ; ounter
+000005AC:             ; 
+000005AC:             ; isActuallyVowel
+000005AC:             ;         ; Set R0 to 1 as per specifcation and branch to end instruction
+000005AC: E3A00001    ;         MOV R0,#1
+000005B0: EAFFFF6A    ;         B end
+000005B4:             ; 
+000005B4:             ; 
+000005B4:             ; ;; RemoveVowels -- remove any vowels in the string at R0 using the isVowel subroutine to identi
+                      ; fy vowels
+000005B4:             ; ;; R0 <-- string
+000005B4:             ; 
+000005B4:             ; RemoveVowels
+000005B4:             ;         
+000005B4:             ; ; readvowels only uses R0; to follow APCS we can store the string in e.g. R1
+000005B4: E1A01000    ;         MOV R1, R0
+000005B8:             ; 
+000005B8:             ;         ; iterate over each character, if it is, then copy all from right over
+000005B8:             ; 
+000005B8:             ; charLoop
+000005B8:             ;         ; Load byte (char) of address R1 into R0
+000005B8: E5510000    ;         LDRB R0, [R1]
+000005BC:             ; 
+000005BC:             ;         ; Check if the current char is a null terminator and stop if it is.
+000005BC: E3500000    ;         CMP R0,#0
+000005C0: 0A00000D    ;         BEQ endItAll
+000005C4:             ; 
+000005C4:             ;         ; Store the return address on the stack
+000005C4: E92D4000    ;         STMFD R13!, {R14}
+000005C8:             ; 
+000005C8:             ;         ; Check if the R0 is a vowel
+000005C8: EBFFFFEB    ;         BL isVowel
+000005CC:             ; 
+000005CC:             ;         ; Restore the return address
+000005CC: E8BD4000    ;         LDMFD R13!, {R14}
+000005D0:             ; 
+000005D0:             ;         ; Temporarily store the current address into R3.
+000005D0: E1A03001    ;         MOV R3,R1
+000005D4:             ; 
+000005D4:             ;         ; isVowel returns 1 if it is a vowel, 0 if not.
+000005D4:             ;         ; If R0 is NOT a vowel, resume the loop
+000005D4: E3500001    ;         CMP R0,#1
+000005D8: 0A000002    ;         BEQ shiftChars
+000005DC:             ; 
+000005DC:             ;         ; If it is NOT a vowel, continue with the below
+000005DC:             ;         
+000005DC:             ; resumeLoop
+000005DC:             ;         ; Restore the address from before the branch back into R1.
+000005DC: E1A01003    ;         MOV R1,R3
+000005E0:             ; 
+000005E0:             ;         ; Increment the address in R1 to go to the next character and loop.
+000005E0: E2811001    ;         ADD R1,R1,#1
+000005E4: EAFFFFF3    ;         B charLoop
+000005E8:             ; 
+000005E8:             ; shiftChars
+000005E8:             ;         ; load into R0 the char at position R1 
+000005E8:             ; 
+000005E8: E5D10001    ;         LDRB    R0, [R1, #1]
+000005EC: E4C10001    ;         STRB    R0, [R1], #1
+000005F0:             ; 
+000005F0: E3500000    ;         CMP     R0,#0
+000005F4: 0AFFFFF8    ;         BEQ     resumeLoop
+000005F8:             ; 
+000005F8:             ;         ; ADD     R1,R1,#1
+000005F8: EAFFFFFA    ;         B       shiftChars
+000005FC:             ; 
+000005FC:             ; endItAll
+000005FC: E1A0F00E    ;         MOV PC, R14
+00000600:             ; 
+00000600:             ; 
+00000600:             ; 
+00000600:             ;                 include BubbleSort.s
+00000600: EA000009    ;                 B       test_insert
+00000604:             ; 
+00000604:             ; ; List of test arrays commented to test if it works...
+00000604:             ; ;tis_array      DEFW    2,6,4,6,2,1,1,3,2
+00000604:             ; ;tis_array      DEFW    1,2,3,4,5,6,7,8,9
+00000604: 00000009    ; tis_array       DEFW    9,8,7,6,5,4,3,2,1
+00000608: 00000008    ; 
+0000060C: 00000007    ; 
+00000610: 00000006    ; 
+00000614: 00000005    ; 
+00000618: 00000004    ; 
+0000061C: 00000003    ; 
+00000620: 00000002    ; 
+00000624: 00000001    ; 
+00000628:             ; ;tis_array      DEFW    9,2,1,4,3,6,5,8,7
+00000628: 0A 00       ; debug_newline   DEFB "\n",0
+0000062A:             ; 
+0000062C:             ;                 ALIGN
+0000062C:             ; 
+0000062C: E3A0D801    ; test_insert     MOV             R13,#0x10000
+00000630: E24F0034    ;                 ADRL    R0,tis_array
+00000634: E3A01009    ;                 MOV             R1,#9
+00000638: EB00000B    ;                 BL              BubbleSort
+0000063C:             ; 
+0000063C: E3A02000    ;                 MOV             R2,#0
+00000640: E3A03009    ;                 MOV             R3,#9
+00000644: E24F1048    ;                 ADRL    R1,tis_array
+00000648: EA000004    ;                 B               tis_cond
+0000064C:             ; tis_loop
+0000064C: E7910102    ;                 LDR             R0, [R1, R2 LSL #2]
+00000650: EF000004    ;                 SWI             4
+00000654: E3A0000A    ;                 MOV             R0,#10
+00000658: EF000000    ;                 SWI             0
+0000065C: E2822001    ;                 ADD             R2,R2,#1
+00000660:             ; tis_cond
+00000660: E1520003    ;                 CMP             R2,R3
+00000664: BAFFFFF8    ;                 BLT             tis_loop
+00000668:             ; 
+00000668: EF000002    ;                 SWI             2
+0000066C:             ; 
+0000066C:             ; 
+0000066C:             ; ; BubbleSort -- should sort given input with bubblesort
+0000066C:             ; ; R0 -> array
+0000066C:             ; ; R1 -> number of elems in array
+0000066C:             ; 
+0000066C:             ; BubbleSort
+0000066C: E92D01FC    ;     STMFD R13!, {R2-R8}
+00000670:             ;     
+00000670: E2418001    ;     SUB R8, R1, #1          ; R8 = length - 1 (outer loop bound)
+00000674: E3A02000    ;     MOV R2, #0              ; R2 = outer loop counter
+00000678:             ; 
+00000678:             ; OuterLoop
+00000678: E3A07000    ;     MOV R7, #0              ; R7 = swap flag (0 = no swaps made)
+0000067C: E3A03000    ;     MOV R3, #0              ; R3 = inner loop counter
+00000680:             ;     
+00000680:             ; InnerLoop
+00000680: E7904103    ;     LDR R4, [R0, R3, LSL #2]       ; Load current element
+00000684: E2835001    ;     ADD R5, R3, #1                  ; Calculate next index
+00000688: E7906105    ;     LDR R6, [R0, R5, LSL #2]       ; Load next element
+0000068C:             ;     
+0000068C: E1540006    ;     CMP R4, R6                      ; Compare elements
+00000690: DA000002    ;     BLE NoSwap                      ; Skip if in correct order
+00000694:             ;     
+00000694:             ;     ; Swap elements
+00000694: E7806103    ;     STR R6, [R0, R3, LSL #2]       ; Store smaller element
+00000698: E7804105    ;     STR R4, [R0, R5, LSL #2]       ; Store larger element
+0000069C: E3A07001    ;     MOV R7, #1                      ; Set swap flag
+000006A0:             ;     
+000006A0:             ; NoSwap
+000006A0: E2833001    ;     ADD R3, R3, #1                  ; Increment inner counter
+000006A4: E0486002    ;     SUB R6, R8, R2                  ; Calculate inner loop bound
+000006A8: E1530006    ;     CMP R3, R6                      ; Check if inner loop complete
+000006AC: BAFFFFF3    ;     BLT InnerLoop                   ; Continue inner loop if not done
+000006B0:             ;     
+000006B0: E3570000    ;     CMP R7, #0                      ; Check if any swaps were made
+000006B4: 0A000002    ;     BEQ Done                        ; If no swaps, array is sorted
+000006B8:             ;     
+000006B8: E2822001    ;     ADD R2, R2, #1                  ; Increment outer counter
+000006BC: E1520008    ;     CMP R2, R8                      ; Check if outer loop complete
+000006C0: BAFFFFEC    ;     BLT OuterLoop                   ; Continue outer loop if not done
+000006C4:             ;     
+000006C4:             ; Done
+000006C4: E8BD01FC    ;     LDMFD R13!, {R2-R8}
+000006C8: E1A0F00E    ;     MOV PC, R14
+000006CC:             ; 
+000006CC: E8BD01FC    ;     LDMFD R13!, {R2-R8}
+000006D0: E1A0F00E    ;     MOV PC, R14
+000006D4:             ; 
+000006D4:             ; spareString     DEFS    512
+000008D4:             ; ansString       DEFS    512
+00000AD4:             ; clueString      DEFS    512
+00000CD4: 00000000    ; wordLengths     DEFW    0
+00000CD8:             ; 
+00000CD8:             ; 
+
+Symbol Table: Labels
+: test                              00000004  Local -- ARM
+: title                             00000037  Local -- ARM
+: prompt                            0000009C  Local -- ARM
+: correct                           000000AF  Local -- ARM
+: wrong                             000000BA  Local -- ARM
+: main                              000000D4  Local -- ARM
+: gloop                             00000180  Local -- ARM
+: incorrect                         000001BC  Local -- ARM
+: crrct                             000001CC  Local -- ARM
+: RedistributeSpaces                000001DC  Local -- ARM
+: rsLoop                            000001E8  Local -- ARM
+: rsadvance                         00000228  Local -- ARM
+: rsSkip                            0000022C  Local -- ARM
+: rsErr                             00000238  Local -- ARM
+: strcmp                            0000023C  Local -- ARM
+: csend                             00000254  Local -- ARM
+: tsc_string                        00000260  Local -- ARM
+: tsc_dest                          0000026C  Local -- ARM
+: tsc_copied                        00000288  Local -- ARM
+: tsc_to                            00000291  Local -- ARM
+: tsc_eol                           00000298  Local -- ARM
+: test_strcpy                       0000029C  Local -- ARM
+: strcpy                            000002D8  Local -- ARM
+: mainStrLoop                       000002D8  Local -- ARM
+: stopCopying                       000002EC  Local -- ARM
+: trs_prompt                        000002F4  Local -- ARM
+: trs_report                        00000304  Local -- ARM
+: test_readstring                   00000314  Local -- ARM
+: ReadString                        00000344  Local -- ARM
+: mainReadLoop                      00000348  Local -- ARM
+: end                               00000360  Local -- ARM
+: trs_str                           0000036C  Local -- ARM
+: tmu_string                        00000374  Local -- ARM
+: tmu_becomes                       00000380  Local -- ARM
+: tmu_eol                           0000038C  Local -- ARM
+: test_makeupper                    00000390  Local -- ARM
+: MakeUpper                         000003C8  Local -- ARM
+: mainLoop                          000003C8  Local -- ARM
+: exit                              000003F0  Local -- ARM
+: tcwrdl_string                     000003F8  Local -- ARM
+: test_cwrdl                        00000410  Local -- ARM
+: tcwrdl_loop                       00000440  Local -- ARM
+: tcwrdl_cond                       00000454  Local -- ARM
+: CountWordLengths                  00000460  Local -- ARM
+: characterLoop                     0000046C  Local -- ARM
+: foundSpace                        00000488  Local -- ARM
+: endCount                          000004A0  Local -- ARM
+: skipLast                          000004B0  Local -- ARM
+: tcwrdl_array                      000004BC  Local -- ARM
+: trv_string                        000004C4  Local -- ARM
+: trv_becomes                       000004D0  Local -- ARM
+: trv_eol                           000004DC  Local -- ARM
+: test_rmvwls                       000004E0  Local -- ARM
+: tsv_vowel                         0000051C  Local -- ARM
+: test_isvowel                      00000538  Local -- ARM
+: tsv_loop                          00000544  Local -- ARM
+: isVowel                           0000057C  Local -- ARM
+: isActuallyVowel                   000005AC  Local -- ARM
+: RemoveVowels                      000005B4  Local -- ARM
+: charLoop                          000005B8  Local -- ARM
+: resumeLoop                        000005DC  Local -- ARM
+: shiftChars                        000005E8  Local -- ARM
+: endItAll                          000005FC  Local -- ARM
+: tis_array                         00000604  Local -- ARM
+: debug_newline                     00000628  Local -- ARM
+: test_insert                       0000062C  Local -- ARM
+: tis_loop                          0000064C  Local -- ARM
+: tis_cond                          00000660  Local -- ARM
+: BubbleSort                        0000066C  Local -- ARM
+: OuterLoop                         00000678  Local -- ARM
+: InnerLoop                         00000680  Local -- ARM
+: NoSwap                            000006A0  Local -- ARM
+: Done                              000006C4  Local -- ARM
+: spareString                       000006D4  Local -- ARM
+: ansString                         000008D4  Local -- ARM
+: clueString                        00000AD4  Local -- ARM
+: wordLengths                       00000CD4  Local -- ARM

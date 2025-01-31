@@ -1,0 +1,235 @@
+KMD
+00000000: EA000032    ;                 B       test_insert
+00000004:             ; 
+00000004:             ; ; REALLY check it.
+00000004: 00000002    ; tis_array       DEFW    2,6,4,6,2,1,1,3,2
+00000008: 00000006    ; 
+0000000C: 00000004    ; 
+00000010: 00000006    ; 
+00000014: 00000002    ; 
+00000018: 00000001    ; 
+0000001C: 00000001    ; 
+00000020: 00000003    ; 
+00000024: 00000002    ; 
+00000028:             ; ;tis_array      DEFW    1,2,3,4,5,6,7,8,9
+00000028:             ; ;tis_array      DEFW    9,8,7,6,5,4,3,2,1
+00000028:             ; ;tis_array      DEFW    9,2,1,4,3,6,5,8,7
+00000028: 0A 00       ; debug_newline   DEFB "\n",0
+0000002A: 0A 49 6E 73 ; debug_inserting DEFB "\nInserting value: ",0
+0000002E: 65 72 74 69 ; 
+00000032: 6E 67 20 76 ; 
+00000036: 61 6C 75 65 ; 
+0000003A: 3A 20 00    ; 
+0000003D: 20 69 73 20 ; debug_islessthan DEFB " is less than ",0
+00000041: 6C 65 73 73 ; 
+00000045: 20 74 68 61 ; 
+00000049: 6E 20 00    ; 
+0000004C: 0A 0A 45 78 ; debug_finalarr DEFB "\n\nExited all operations.\nFinal array: \n",0
+00000050: 69 74 65 64 ; 
+00000054: 20 61 6C 6C ; 
+00000058: 20 6F 70 65 ; 
+0000005C: 72 61 74 69 ; 
+00000060: 6F 6E 73 2E ; 
+00000064: 0A 46 69 6E ; 
+00000068: 61 6C 20 61 ; 
+0000006C: 72 72 61 79 ; 
+00000070: 3A 20 0A 00 ; 
+00000074: 0A 43 75 72 ; debug_currentint DEFB "\nCurrent int: ",0
+00000078: 72 65 6E 74 ; 
+0000007C: 20 69 6E 74 ; 
+00000080: 3A 20 00    ; 
+00000083: 2C 20 70 72 ; debug_prevint   DEFB ", previous int: ",0
+00000087: 65 76 69 6F ; 
+0000008B: 75 73 20 69 ; 
+0000008F: 6E 74 3A 20 ; 
+00000093: 00          ; 
+00000094: 0A 43 6F 75 ; debug_counter DEFB "\nCounter: ",0
+00000098: 6E 74 65 72 ; 
+0000009C: 3A 20 00    ; 
+0000009F: 20 69 73 20 ; debug_isgreaterthan DEFB " is greater than ",0
+000000A3: 67 72 65 61 ; 
+000000A7: 74 65 72 20 ; 
+000000AB: 74 68 61 6E ; 
+000000AF: 20 00       ; 
+000000B1: 0A 49 6E 73 ; debug_inserted DEFB "\nInserted ",0
+000000B5: 65 72 74 65 ; 
+000000B9: 64 20 00    ; 
+000000BC: 20 69 6E 74 ; debug_intoposition DEFB " into position ",0
+000000C0: 6F 20 70 6F ; 
+000000C4: 73 69 74 69 ; 
+000000C8: 6F 6E 20 00 ; 
+000000CC: 20 00       ; debug_space DEFB " ",0
+000000CE:             ; 
+000000D0:             ;                 ALIGN
+000000D0:             ; 
+000000D0:             ; 
+000000D0: E3A0D801    ; test_insert     MOV             R13,#0x10000
+000000D4: E24F00D8    ;                 ADRL    R0,tis_array
+000000D8: E3A01009    ;                 MOV             R1,#9
+000000DC: EB00000B    ;                 BL              InsertionSort
+000000E0:             ; 
+000000E0: E3A02000    ;                 MOV             R2,#0
+000000E4: E3A03009    ;                 MOV             R3,#9
+000000E8: E24F10EC    ;                 ADRL    R1,tis_array
+000000EC: EA000004    ;                 B               tis_cond
+000000F0:             ; tis_loop
+000000F0: E7910102    ;                 LDR             R0, [R1, R2 LSL #2]
+000000F4: EF000004    ;                 SWI             4
+000000F8: E3A0000A    ;                 MOV             R0,#10
+000000FC: EF000000    ;                 SWI             0
+00000100: E2822001    ;                 ADD             R2,R2,#1
+00000104:             ; tis_cond
+00000104: E1520003    ;                 CMP             R2,R3
+00000108: BAFFFFF8    ;                 BLT             tis_loop
+0000010C:             ; 
+0000010C: EF000002    ;                 SWI             2
+00000110:             ; 
+00000110:             ; 
+00000110:             ; ; InsertionSort -- should sort the array using the Insertion sort algorithm
+00000110:             ; ; R0 -> array
+00000110:             ; ; R1 -> number of elems in array
+00000110:             ; 
+00000110:             ; InsertionSort
+00000110:             ;         ; The algorithm will first start looping through the array index
+00000110:             ; 
+00000110: E3A04001    ;         MOV     R4, #1 ; initialise counter variable for the array loop, starting at 1
+00000114:             ; 
+00000114:             ; InsertionArrayLoop
+00000114:             ; 
+00000114: E7D03104    ;         LDRB    R3, [R0, R4 LSL #2]     ; get integer at the current position
+00000118: E2445001    ;         SUB     R5, R4, #1
+0000011C: E7D02105    ;         LDRB    R2, [R0, R5 LSL #2]             ; get integer at previous position (greatest in
+                      ;  the sorted array)
+00000120: E2844001    ;         ADD     R4, R4, #1                              ; Increment counter
+00000124:             ; 
+00000124:             ; 
+00000124:             ;         ; -- Debug -- ->> THIS ABOVE PROBABLY WORKS AS EXPECTED!
+00000124: E92D0001    ;         STMFD   R13!, {R0}
+00000128: E24F009C    ;         ADRL    R0, debug_counter
+0000012C: EF000003    ;         SWI     3
+00000130: E1A00004    ;         MOV     R0, R4
+00000134: EF000004    ;         SWI     4
+00000138: E24F00CC    ;         ADRL    R0, debug_currentint
+0000013C: EF000003    ;         SWI     3
+00000140: E1A00003    ;         MOV     R0, R3
+00000144: EF000004    ;         SWI     4
+00000148: E24F00CD    ;         ADRL    R0, debug_prevint
+0000014C: EF000003    ;         SWI     3
+00000150: E1A00002    ;         MOV     R0, R2
+00000154: EF000004    ;         SWI     4
+00000158: E24F0F4E    ;         ADRL    R0, debug_newline
+0000015C: EF000003    ;         SWI     3
+00000160: EF000003    ;         SWI     3
+00000164: E8BD0001    ;         LDMFD   R13!, {R0}
+00000168:             ; 
+00000168:             ;         ; Current pos should be greater than previous pos, if so then move on
+00000168: E1530002    ;         CMP     R3, R2
+0000016C: AAFFFFE8    ;         BGE     InsertionArrayLoop
+00000170:             ; 
+00000170:             ; 
+00000170: E1A06004    ;         MOV R6, R4      ; store original index as this gets changes
+00000174: E1A07002    ;         MOV R7, R2
+00000178: E92D4000    ;         STMFD R13!, {R14}
+0000017C: E92D0008    ;         STMFD R13!, {R3}
+00000180: E92D00C0    ;         STMFD R13!, {R6-R7}
+00000184: EB00000C    ;         BL InsertInt
+00000188: E8BD00C0    ;         LDMFD R13!, {R6-R7}
+0000018C: E8BD0008    ;         LDMFD R13!, {R3}
+00000190: E8BD4000    ;         LDMFD R13!, {R14}
+00000194: E1A02007    ;         MOV R2, R7
+00000198: E1A04006    ;         MOV R4, R6
+0000019C:             ; 
+0000019C:             ;         ; if incremented counter is bigger than number of elems, quit
+0000019C: E1540001    ;         CMP     R4,R1
+000001A0: AA000000    ;         BGE             endItAll
+000001A4:             ; 
+000001A4:             ;         ; else, repeat the loop
+000001A4:             ; 
+000001A4: EAFFFFDA    ;         B InsertionArrayLoop
+000001A8:             ; 
+000001A8:             ; endItAll
+000001A8: E92D0001    ;         STMFD R13!, {R0}
+000001AC: E24F0F5A    ;         ADRL R0, debug_finalarr
+000001B0: EF000003    ;         SWI 3
+000001B4: E8BD0001    ;         LDMFD R13!, {R0}
+000001B8:             ; 
+000001B8: E1A0F00E    ;         MOV PC, R14
+000001BC:             ; 
+000001BC:             ; ; R2 <- integer to insert into the array
+000001BC:             ; ; R4 <- index
+000001BC:             ; InsertInt
+000001BC:             ; 
+000001BC:             ;         ; make copy of the element to insert
+000001BC: E1A06004    ;         MOV R6, R4
+000001C0:             ; 
+000001C0:             ;         ; loop back through the sorted elements, shifting by one.
+000001C0:             ; 
+000001C0:             ;         ;SUB R4, R4, #1 ; decrement counter as it is not in the array yet.
+000001C0:             ; 
+000001C0:             ; InsertIntShiftSorted
+000001C0:             ;         ; element at index J is set to the value at index -1.
+000001C0: E2444001    ;         SUB     R4, R4, #1                      ; Decrement R4                  
+000001C4: E7D05104    ;         LDRB    R5, [R0, R4 LSL #2]     ; R5 contains element at index J-1
+000001C8: E2843001    ;         ADD             R3, R4, #1                      ; R3 = R4 + 1
+000001CC: E7C05103    ;         STRB    R5, [R0, R3 LSL #2] ; Store element at j-1 into J
+000001D0:             ; 
+000001D0:             ; 
+000001D0:             ;         ; more debuggery
+000001D0: E92D0001    ;         STMFD   R13!, {R0}
+000001D4:             ; 
+000001D4: E8BD0001    ;         LDMFD   R13!, {R0}
+000001D8:             ; 
+000001D8:             ;         ; until 1.) J reaches 0
+000001D8: E3540000    ;         CMP     R4, #0
+000001DC: DA000001    ;         BLE             InsertIntEnded
+000001E0:             ; 
+000001E0:             ;         ; 2.) element at j-1 is less than the value to be inserted
+000001E0: E1550002    ;         CMP     R5, R2
+000001E4: AAFFFFF4    ;         BGE     InsertInt       ; if j-1 is greater than value, reloop
+000001E8:             ; 
+000001E8:             ; InsertIntEnded
+000001E8:             ;         ; at this point, stored value can be inserted at J
+000001E8:             ;         ;ADD    R4, R4, #1
+000001E8: E7C02104    ;         STRB    R2, [R0, R4 LSL #2]
+000001EC:             ; 
+000001EC:             ;         ; more debuggery
+000001EC: E92D0001    ;         STMFD   R13!, {R0}
+000001F0: E24F0047    ;         ADRL    R0, debug_inserted
+000001F4: E2400C01    ; 
+000001F8: EF000003    ;         SWI     3
+000001FC: E1A00002    ;         MOV     R0, R2
+00000200: EF000004    ;         SWI     4
+00000204: E24F0E15    ;         ADRL    R0, debug_intoposition
+00000208: EF000003    ;         SWI     3
+0000020C: E1A00004    ;         MOV     R0, R4
+00000210: EF000004    ;         SWI     4
+00000214: E24F0F7D    ;         ADRL    R0, debug_newline
+00000218: EF000003    ;         SWI     3
+0000021C: E8BD0001    ;         LDMFD   R13!, {R0}
+00000220:             ; 
+00000220:             ;         
+00000220: E1A0F00E    ;         MOV PC, R14
+00000224:             ; 
+
+Symbol Table: Labels
+: tis_array                         00000004  Local -- ARM
+: debug_newline                     00000028  Local -- ARM
+: debug_inserting                   0000002A  Local -- ARM
+: debug_islessthan                  0000003D  Local -- ARM
+: debug_finalarr                    0000004C  Local -- ARM
+: debug_currentint                  00000074  Local -- ARM
+: debug_prevint                     00000083  Local -- ARM
+: debug_counter                     00000094  Local -- ARM
+: debug_isgreaterthan               0000009F  Local -- ARM
+: debug_inserted                    000000B1  Local -- ARM
+: debug_intoposition                000000BC  Local -- ARM
+: debug_space                       000000CC  Local -- ARM
+: test_insert                       000000D0  Local -- ARM
+: tis_loop                          000000F0  Local -- ARM
+: tis_cond                          00000104  Local -- ARM
+: InsertionSort                     00000110  Local -- ARM
+: InsertionArrayLoop                00000114  Local -- ARM
+: endItAll                          000001A8  Local -- ARM
+: InsertInt                         000001BC  Local -- ARM
+: InsertIntShiftSorted              000001C0  Local -- ARM
+: InsertIntEnded                    000001E8  Local -- ARM
